@@ -1,0 +1,8 @@
+[packages]
+"hikari[speedups]" = "*"
+hikari-crescent = "*"
+python-dotenv = "*"
+aiohttp = "*"
+bs4 = "*"
+uvloop = "*"
+playwright = "*"

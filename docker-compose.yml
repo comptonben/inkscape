@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  inkscape-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: python -OO -m inkscape --deploy=True
+    working_dir: /app
+    volumes:
+      - .:/app
+
+  inkscape-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: python -OO -m inkscape
+    working_dir: /app
+    volumes:
+      - .:/app
