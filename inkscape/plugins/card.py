@@ -1,5 +1,8 @@
+import aiohttp
 import crescent
 import hikari
+
+from bs4 import BeautifulSoup
 
 plugin = crescent.Plugin[hikari.GatewayBot, None]()
 
@@ -62,6 +65,8 @@ class Card:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond(f"Searching for {self.token}...")
+
         url = f"https://dreamborn.ink/cards?contains={self.token}"
 
         if self.color:
@@ -78,4 +83,19 @@ class Card:
         if self.rarity:
             url += f"&rarity={self.rarity}"
 
-        await ctx.respond(url)
+        await ctx.respond("about to hit the url")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response.raise_for_status()
+                data = await response.text()
+                soup = BeautifulSoup(data, "html.parser")
+                # target_class = "@container overflow-y-auto"
+                target_div = soup.find("div")
+
+                if target_div:
+                    child_divs = target_div.find_all("div", recursive=False)
+                    print(f"found {len(child_divs)} child divs")
+                    for i, div in enumerate(child_divs, start=1):
+                        print(f"\nDiv {i}:\n{div.prettify()}")
+                else:
+                    print("Didn't find div")
